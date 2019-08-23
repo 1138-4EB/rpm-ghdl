@@ -794,8 +794,7 @@ popd
 %{_mandir}/man1/*
 %{_includedir}/ghdl/vpi_user.h
 %{_includedir}/ghdl/ghdlsynth*.h
-%{_libdir}/libghdlvpi.so
-%{_libdir}/libghdl-*.so
+%{_libdir}/libghdl*.so
 
 %files grt
 # Need to own directory %{_libdir}/gcc even though we only want the

@@ -725,8 +725,6 @@ make bindir=${PBINDIR} GHDL1_GCC_BIN="--GHDL1=${PBINDIR}/ghdl1" ghdllib
 make DESTDIR=%{buildroot} install
 popd
 
-%{__mv} %{buildroot}%{_prefix}/lib/libghdlvpi.so %{buildroot}%{_libdir}/ghdlvpi.so
-
 # Add additional libraries to link
 (
 %if 0%{?fedora} >= 30
@@ -747,8 +745,8 @@ echo "-lgnat-6"
 # Remove files not to be packaged
 pushd %{buildroot}
 %{__rm} -f \
-        .%{_bindir}/{cpp,gcc,gccbug,gcov} \
-        .%{_bindir}/%{gcc_target_platform}-gcc{,-%{gcc_version}} \
+        .%{_bindir}/{cpp,gcc,gccbug,gcov,gcov-dump,gcov-tool} \
+        .%{_bindir}/%{gcc_target_platform}-gcc{,-%{gcc_major}} \
         .%{_bindir}/{,%{gcc_target_platform}-}gcc-{ar,nm,ranlib} \
         .%{_includedir}/mf-runtime.h \
         .%{_libdir}/lib* \
@@ -766,21 +764,26 @@ pushd %{buildroot}
 
 # Remove crt/libgcc, as ghdl invokes the native gcc to perform the linking
 %{__rm} -f \
-        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/crt* \
-        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libgc* \
-        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_version}/{cc1,collect2}
+        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/*crt* \
+        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/libgc* \
+        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/{cc1,collect2} \
+        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/*lto*
 
 # Remove directory hierarchies not to be packaged
 %{__rm} -rf \
-        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/{include,include-fixed,plugin,install-tools} \
-        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_version}/install-tools
+        .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/{include,include-fixed,plugin,install-tools} \
+        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/install-tools \
+        .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/plugin \
 
 popd
 
-%{__mv} %{buildroot}%{_libdir}/ghdlvpi.so %{buildroot}%{_libdir}/libghdlvpi.so
 %{__install} -d %{buildroot}%{_includedir}/ghdl
 %{__mv} %{buildroot}%{_includedir}/vpi_user.h %{buildroot}%{_includedir}/ghdl
-%{__rm} %{buildroot}%{_bindir}/gcov-tool
+%{__mv} %{buildroot}%{_includedir}/ghdlsynth*.h %{buildroot}%{_includedir}/ghdl
+%if %{_lib} != lib
+%{__mv} %{buildroot}/usr/lib/libghdlvpi.so %{buildroot}%{_libdir}/
+%{__mv} %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
+%endif
 
 %files
 %{_bindir}/ghdl
@@ -790,7 +793,9 @@ popd
 %{_libexecdir}/gcc/
 %{_mandir}/man1/*
 %{_includedir}/ghdl/vpi_user.h
+%{_includedir}/ghdl/ghdlsynth*.h
 %{_libdir}/libghdlvpi.so
+%{_libdir}/libghdl-*.so
 
 %files grt
 # Need to own directory %{_libdir}/gcc even though we only want the

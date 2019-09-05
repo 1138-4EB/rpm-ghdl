@@ -1,5 +1,8 @@
 %global ghdlver 0.37dev
-%global ghdlgitrev .20190820gitf977ba0d
+%global ghdldate 20190820
+%global ghdlcommit f977ba0dd5b152e97619ecfe1d848d83f2e062ff
+%global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
+%global ghdlgitrev .%{ghdldate}git%{ghdlshortcommit}
 
 %ifarch %{ix86} x86_64
 %bcond_without mcode
@@ -153,11 +156,7 @@ Patch1000: nvptx-tools-no-ptxas.patch
 Patch1001: nvptx-tools-build.patch
 Patch1002: nvptx-tools-glibc.patch
 
-# HOWTO create source files from ghdl git at github.com
-# check out the git repo
-# git clone https://github.com/ghdl/ghdl.git
-# tar cvJf ghdl%{ghdlgitrev}.tar.bz2 --exclude-vcs ghdl
-Source100: ghdl%{ghdlgitrev}.tar.bz2
+Source100: https://github.com/ghdl/ghdl/archive/%{ghdlcommit}/%{name}-%{ghdlshortcommit}.tar.gz
 Patch100: ghdl-llvmflags.patch
 # enable synth on llvm, link with -lm
 # https://github.com/ghdl/ghdl/commit/3c81c6f8fb41058e505c61db0f7d566ffebe2357
@@ -398,6 +397,8 @@ fi
 # This test causes fork failures, because it spawns way too many threads
 rm -f gcc/testsuite/go.test/test/chan/goroutines.go
 
+# ghdl
+mv ghdl-%{ghdlcommit} ghdl
 %patch100 -p0 -b .llvmflags~
 pushd ghdl
 %patch101 -p1

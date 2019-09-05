@@ -2,7 +2,7 @@
 %global ghdldate 20190820
 %global ghdlcommit f977ba0dd5b152e97619ecfe1d848d83f2e062ff
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
-%global ghdlgitrev .%{ghdldate}git%{ghdlshortcommit}
+%global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
 
 %ifarch %{ix86} x86_64
 %bcond_without mcode
@@ -114,7 +114,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 5%{ghdlgitrev}.1%{?dist}
+Release: 1.%{ghdlgitrev}%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -821,6 +821,10 @@ popd
 %endif
 
 %changelog
+* Thu Sep 05 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-1.20190820gitf977ba0
+- rebased to 0.37dev
+- various cleanups and updates
+
 * Fri Aug 23 2019 Dan Horák <dan[at]danny.cz> - 0.35dev-5.20190528git3fafb135.0
 - enable ppc64le
 

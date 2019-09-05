@@ -746,7 +746,7 @@ pushd %{buildroot}
         .%{_bindir}/%{gcc_target_platform}-gcc{,-%{gcc_major}} \
         .%{_bindir}/{,%{gcc_target_platform}-}gcc-{ar,nm,ranlib} \
         .%{_includedir}/mf-runtime.h \
-        .%{_libdir}/lib* \
+        .%{_libdir}/lib{atomic,cc1,gcc_s,gomp,quadmath,ssp}* \
         .%{_infodir}/dir \
         .%{_infodir}/{cpp,cppinternals,gcc,gccinstall,gccint}.info* \
         .%{_infodir}/{libgomp,libquadmath}.info* \

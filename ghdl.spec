@@ -112,7 +112,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 5%{ghdlgitrev}.0%{?dist}
+Release: 5%{ghdlgitrev}.1%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -160,7 +160,9 @@ Patch1002: nvptx-tools-glibc.patch
 # tar cvJf ghdl%{ghdlgitrev}.tar.bz2 --exclude-vcs ghdl
 Source100: ghdl%{ghdlgitrev}.tar.bz2
 Patch100: ghdl-llvmflags.patch
-# Both following patches have been sent to upstream mailing list:
+# enable synth on llvm, link with -lm
+# https://github.com/ghdl/ghdl/commit/3c81c6f8fb41058e505c61db0f7d566ffebe2357
+Patch101: ghdl-fix.patch
 # From: Thomas Sailer <t.sailer@alumni.ethz.ch>
 # To: ghdl-discuss@gna.org
 # Date: Thu, 02 Apr 2009 15:36:00 +0200
@@ -398,6 +400,9 @@ fi
 rm -f gcc/testsuite/go.test/test/chan/goroutines.go
 
 %patch100 -p0 -b .llvmflags~
+pushd ghdl
+%patch101 -p1
+popd
 
 %if %{without gnatwae}
 perl -i -pe 's,-gnatwae,,' ghdl/dist/gcc/Make-lang.in
@@ -407,11 +412,7 @@ perl -i -pe 's,-gnatwae,,' ghdl/dist/gcc/Make-lang.in
 %if %{with mcode}
 cp -r ghdl ghdl-mcode
 pushd ghdl-mcode
-%if "%{?_lib}" == "lib64"
-perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=lib64/ghdl/mcode,' configure
-%else
-perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=lib/ghdl/mcode,' configure
-%endif
+perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=%{_lib}/ghdl/mcode,' configure
 perl -i -pe 's,^libdirreverse=.*$,libdirreverse=../../..,' configure
 popd
 %endif
@@ -420,11 +421,7 @@ popd
 %if %{with llvm}
 cp -r ghdl ghdl-llvm
 pushd ghdl-llvm
-%if "%{?_lib}" == "lib64"
-perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=lib64/ghdl/llvm,' configure
-%else
-perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=lib/ghdl/llvm,' configure
-%endif
+perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=%{_lib}/ghdl/llvm,' configure
 perl -i -pe 's,^libdirreverse=.*$,libdirreverse=../../..,' configure
 popd
 %endif
@@ -433,7 +430,7 @@ sed -i -e 's/4\.9\.3/4.9.2/' gcc/BASE-VER
 echo 'Red Hat %{version}-%{gcc_release}' > gcc/DEV-PHASE
 
 pushd ghdl
-./configure --prefix=/usr --with-gcc=..
+./configure --prefix=/usr --with-gcc=.. --enable-libghdl --enable-synth
 make copy-sources
 popd
 
@@ -461,7 +458,7 @@ pushd ghdl-llvm
 %if %{without gnatwae}
 	--disable-werror \
 %endif
-	--with-llvm-config=/usr/bin/llvm-config
+	--with-llvm-config=/usr/bin/llvm-config --enable-libghdl --enable-synth
 make %{?_smp_mflags} LDFLAGS=-Wl,--build-id
 popd
 %endif

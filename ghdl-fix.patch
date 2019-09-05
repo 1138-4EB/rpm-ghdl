@@ -1,0 +1,54 @@
+commit 3c81c6f8fb41058e505c61db0f7d566ffebe2357
+Author: Tristan Gingold <tgingold@free.fr>
+Date:   Fri Aug 30 07:49:36 2019 +0200
+
+    synth: add support for --synth on llvm, link with -lm.
+
+diff --git a/src/ghdldrv/ghdl_llvm.adb b/src/ghdldrv/ghdl_llvm.adb
+index c170c4b5..f18741bd 100644
+--- a/src/ghdldrv/ghdl_llvm.adb
++++ b/src/ghdldrv/ghdl_llvm.adb
+@@ -21,6 +21,7 @@ with Ghdlprint;
+ with Ghdldrv;
+ with Ghdlvpi;
+ with Ghdlxml;
++with Ghdlsynth_Maybe;
+ 
+ procedure Ghdl_Llvm is
+ begin
+@@ -29,6 +30,7 @@ begin
+    Ghdlmain.Version_String := new String'("llvm code generator");
+    Ghdldrv.Backend := Ghdldrv.Backend_Llvm;
+    Ghdldrv.Register_Commands;
++   Ghdlsynth_Maybe.Register_Commands;
+    Ghdllocal.Register_Commands;
+    Ghdlprint.Register_Commands;
+    Ghdlvpi.Register_Commands;
+diff --git a/src/synth/synth-expr.adb b/src/synth/synth-expr.adb
+index d24486f3..26318bcf 100644
+--- a/src/synth/synth-expr.adb
++++ b/src/synth/synth-expr.adb
+@@ -43,6 +43,10 @@ with Netlists.Builders; use Netlists.Builders;
+ with Netlists.Locations; use Netlists.Locations;
+ 
+ package body Synth.Expr is
++   --  As log2(3m) is directly referenced, the program must be linked with -lm
++   --  (math library) on unix systems.
++   pragma Linker_Options ("-lm");
++
+    function Synth_Name (Syn_Inst : Synth_Instance_Acc; Name : Node)
+                        return Value_Acc;
+ 
+diff --git a/Makefile.in b/Makefile.in
+index e08e231b..c6941f52 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -300,7 +300,7 @@ oread-gcc$(EXEEXT): force
+ 
+ #################### For llvm backend ##############################
+ 
+-GHDL_LLVM_INCFLAGS=$(GHDL_COMMON_INCFLAGS) -aI$(srcdir)/src/ghdldrv -aI$(srcdir)/src/ortho -aI$(srcdir)/src/ortho/$(llvm_be)
++GHDL_LLVM_INCFLAGS=$(GHDL_COMMON_INCFLAGS) -aI$(srcdir)/src/ghdldrv -aI$(srcdir)/src/ortho -aI$(srcdir)/src/ortho/$(llvm_be) -aI$(srcdir)/src/synth
+ 
+ all.llvm: ghdl1-llvm$(EXEEXT) ghdl_llvm$(EXEEXT) grt-all libs.vhdl.llvm all.vpi
+ 

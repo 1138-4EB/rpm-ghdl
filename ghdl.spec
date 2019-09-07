@@ -1,8 +1,7 @@
 %global ghdlver 0.37dev
-%global ghdldate 20191121
 %global ghdlcommit 03862a4607fd127e6570a3e141a92265a23c2a68
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
-%global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
+%global ghdlgitrev 20190907git%{ghdlshortcommit}
 
 %ifarch %{ix86} x86_64
 %bcond_without mcode

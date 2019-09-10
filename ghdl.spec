@@ -1,6 +1,6 @@
 %global ghdlver 0.37dev
-%global ghdldate 20190820
-%global ghdlcommit f977ba0dd5b152e97619ecfe1d848d83f2e062ff
+%global ghdldate 20190907
+%global ghdlcommit cb3468002497ab2090bef31d559e2eaf4747b90a
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
 %global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
 
@@ -114,7 +114,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 1.%{ghdlgitrev}%{?dist}
+Release: 2.%{ghdlgitrev}%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -158,9 +158,6 @@ Patch1002: nvptx-tools-glibc.patch
 
 Source100: https://github.com/ghdl/ghdl/archive/%{ghdlcommit}/%{name}-%{ghdlshortcommit}.tar.gz
 Patch100: ghdl-llvmflags.patch
-# enable synth on llvm, link with -lm
-# https://github.com/ghdl/ghdl/commit/3c81c6f8fb41058e505c61db0f7d566ffebe2357
-Patch101: ghdl-fix.patch
 # From: Thomas Sailer <t.sailer@alumni.ethz.ch>
 # To: ghdl-discuss@gna.org
 # Date: Thu, 02 Apr 2009 15:36:00 +0200
@@ -400,9 +397,6 @@ rm -f gcc/testsuite/go.test/test/chan/goroutines.go
 # ghdl
 mv ghdl-%{ghdlcommit} ghdl
 %patch100 -p0 -b .llvmflags~
-pushd ghdl
-%patch101 -p1
-popd
 
 %if %{without gnatwae}
 perl -i -pe 's,-gnatwae,,' ghdl/dist/gcc/Make-lang.in
@@ -821,6 +815,9 @@ popd
 %endif
 
 %changelog
+* Tue Sep 10 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-2.20190907gitcb34680
+- updated to new ghdl snapshot
+
 * Thu Sep 05 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-1.20190820gitf977ba0
 - rebased to 0.37dev
 - various cleanups and updates

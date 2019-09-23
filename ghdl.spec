@@ -674,8 +674,6 @@ popd
 popd
 
 %install
-%{__rm} -rf %{buildroot}
-
 # install mcode on x86
 %ifarch %{ix86} x86_64
 %if %{with mcode}

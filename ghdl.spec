@@ -440,7 +440,7 @@ pushd ghdl-mcode
 %if %{without gnatwae}
 	--disable-werror \
 %endif
-	--prefix=/usr
+	--prefix=/usr --enable-libghdl --enable-synth
 make %{?_smp_mflags}
 popd
 %endif

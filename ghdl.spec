@@ -114,7 +114,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 3.%{ghdlgitrev}%{?dist}
+Release: 4.%{ghdlgitrev}%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -813,6 +813,9 @@ popd
 %endif
 
 %changelog
+* Wed Oct  9 2019 Jerry James <loganjerry@gmail.com> - 0.37dev-4.20190923git4ec17bb
+- Rebuild for mpfr 4
+
 * Tue Sep 24 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-3.20190923git4ec17bb
 - updated to new ghdl snapshot
 

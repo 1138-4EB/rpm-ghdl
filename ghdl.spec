@@ -42,7 +42,7 @@
 # Until annobin is fixed (#1519165).
 %undefine _annotated_build
 %endif
-%global multilib_64_archs sparc64 ppc64 ppc64p7 s390x x86_64
+%global multilib_64_archs sparc64 ppc64 ppc64p7 x86_64
 %ifarch %{ix86} x86_64 ia64 ppc64le
 %global build_libquadmath 1
 %else
@@ -97,9 +97,6 @@
 %global build_offload_nvptx 1
 %else
 %global build_offload_nvptx 0
-%endif
-%ifarch s390x
-%global multilib_32_arch s390
 %endif
 %ifarch sparc64
 %global multilib_32_arch sparcv9
@@ -527,7 +524,7 @@ CONFIGURE_OPTS="\
 %ifarch ppc64le
 	--enable-targets=powerpcle-linux \
 %endif
-%ifarch ppc64le %{mips} riscv64
+%ifarch ppc64le %{mips} riscv64 s390x
 	--disable-multilib \
 %else
 	--enable-multilib \
@@ -815,6 +812,7 @@ popd
 %changelog
 * Wed Oct  9 2019 Jerry James <loganjerry@gmail.com> - 0.37dev-4.20190923git4ec17bb
 - Rebuild for mpfr 4
+- Drop multilib support for s390x as glibc32 and gcc have done
 
 * Tue Sep 24 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-3.20190923git4ec17bb
 - updated to new ghdl snapshot

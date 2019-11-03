@@ -1,6 +1,6 @@
 %global ghdlver 0.37dev
-%global ghdldate 20190923
-%global ghdlcommit 4ec17bb58394a6c03c8a4ac938e4a674a5f33e79
+%global ghdldate 20191102
+%global ghdlcommit 534f39a26135724ceaa81b60de8856b723953f5b
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
 %global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
 
@@ -111,7 +111,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 4.%{ghdlgitrev}%{?dist}
+Release: 5.%{ghdlgitrev}%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -810,6 +810,9 @@ popd
 %endif
 
 %changelog
+* Sun Nov 03 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-5.20191102git534f39a
+- updated to new ghdl snapshot
+
 * Wed Oct  9 2019 Jerry James <loganjerry@gmail.com> - 0.37dev-4.20190923git4ec17bb
 - Rebuild for mpfr 4
 - Drop multilib support for s390x as glibc32 and gcc have done

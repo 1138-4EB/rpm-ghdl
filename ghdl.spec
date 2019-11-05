@@ -33,8 +33,6 @@
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
 %global gcc_release 1
-%global nvptx_tools_gitrev c28050f60193b3b95a18866a96f03334e874e78f
-%global nvptx_newlib_gitrev aadc8eb0ec43b7cd0dd2dfb484bae63c8b05ef24
 %global _performance_build 1
 # Hardening slows the compiler way too much.
 %undefine _hardened_build
@@ -93,11 +91,6 @@
 %else
 %global attr_ifunc 0
 %endif
-%ifarch x86_64 ppc64le
-%global build_offload_nvptx 1
-%else
-%global build_offload_nvptx 0
-%endif
 %ifarch sparc64
 %global multilib_32_arch sparcv9
 %endif
@@ -120,20 +113,6 @@ URL: http://ghdl.free.fr/
 # svn export svn://gcc.gnu.org/svn/gcc/branches/redhat/gcc-9-branch@%%{SVNREV} $GCC_TARNAME
 # tar cf - $GCC_TARNAME | xz -9e > $GCC_TARNAME.tar.xz
 Source0: gcc-%{gcc_version}-%{DATE}.tar.xz
-# The source for nvptx-tools package was pulled from upstream's vcs.  Use the
-# following commands to generate the tarball:
-# git clone https://github.com/MentorEmbedded/nvptx-tools.git
-# cd nvptx-tools
-# git archive origin/master --prefix=nvptx-tools-%%{nvptx_tools_gitrev}/ | xz -9e > ../nvptx-tools-%%{nvptx_tools_gitrev}.tar.xz
-# cd ..; rm -rf nvptx-tools
-Source1: nvptx-tools-%{nvptx_tools_gitrev}.tar.xz
-# The source for nvptx-newlib package was pulled from upstream's vcs.  Use the
-# following commands to generate the tarball:
-# git clone https://github.com/MentorEmbedded/nvptx-newlib.git
-# cd nvptx-newlib
-# git archive origin/master --prefix=nvptx-newlib-%%{nvptx_newlib_gitrev}/ | xz -9 > ../nvptx-newlib-%%{nvptx_newlib_gitrev}.tar.xz
-# cd ..; rm -rf nvptx-newlib
-Source2: nvptx-newlib-%{nvptx_newlib_gitrev}.tar.xz
 %global isl_version 0.16.1
 
 Patch0: gcc9-hack.patch
@@ -148,10 +127,6 @@ Patch9: gcc9-Wno-format-security.patch
 Patch10: gcc9-rh1574936.patch
 Patch11: gcc9-d-shared-libphobos.patch
 Patch12: gcc9-pr90303.patch
-
-Patch1000: nvptx-tools-no-ptxas.patch
-Patch1001: nvptx-tools-build.patch
-Patch1002: nvptx-tools-glibc.patch
 
 Source100: https://github.com/ghdl/ghdl/archive/%{ghdlcommit}/%{name}-%{ghdlshortcommit}.tar.gz
 Patch100: ghdl-llvmflags.patch
@@ -337,7 +312,7 @@ that tracks signal updates and schedules processes.
 %endif
 
 %prep
-%setup -q -n gcc-%{gcc_version}-%{DATE} -a 1 -a 2 -a 100
+%setup -q -n gcc-%{gcc_version}-%{DATE} -a 100
 %patch0 -p0 -b .hack~
 %patch1 -p0 -b .i386-libgomp~
 %patch2 -p0 -b .sparc-config-detection~
@@ -354,12 +329,6 @@ that tracks signal updates and schedules processes.
 %endif
 %patch11 -p0 -b .d-shared-libphobos~
 %patch12 -p0 -b .pr90303~
-
-cd nvptx-tools-%{nvptx_tools_gitrev}
-%patch1000 -p1 -b .nvptx-tools-no-ptxas~
-%patch1001 -p1 -b .nvptx-tools-build~
-%patch1002 -p1 -b .nvptx-tools-glibc~
-cd ..
 
 echo 'Red Hat %{version}-%{gcc_release}' > gcc/DEV-PHASE
 
@@ -478,40 +447,6 @@ case "$OPT_FLAGS" in
     ;;
 esac
 
-%if %{build_offload_nvptx}
-mkdir obji
-IROOT=`pwd`/obji
-cd nvptx-tools-%{nvptx_tools_gitrev}
-rm -rf obj-%{gcc_target_platform}
-mkdir obj-%{gcc_target_platform}
-cd obj-%{gcc_target_platform}
-CC="$CC" CXX="$CXX" CFLAGS="%{optflags}" CXXFLAGS="%{optflags}" \
-../configure --prefix=%{_prefix}
-make %{?_smp_mflags}
-make install prefix=${IROOT}%{_prefix}
-cd ../..
-
-ln -sf nvptx-newlib-%{nvptx_newlib_gitrev}/newlib newlib
-rm -rf obj-offload-nvptx-none
-mkdir obj-offload-nvptx-none
-
-cd obj-offload-nvptx-none
-CC="$CC" CXX="$CXX" CFLAGS="$OPT_FLAGS" \
-	CXXFLAGS="`echo " $OPT_FLAGS " | sed 's/ -Wall / /g;s/ -fexceptions / /g' \
-		  | sed 's/ -Wformat-security / -Wformat -Wformat-security /'`" \
-	XCFLAGS="$OPT_FLAGS" TCFLAGS="$OPT_FLAGS" \
-	../configure --disable-bootstrap --disable-sjlj-exceptions \
-	--enable-newlib-io-long-long --with-build-time-tools=${IROOT}%{_prefix}/nvptx-none/bin \
-	--target nvptx-none --enable-as-accelerator-for=%{gcc_target_platform} \
-	--enable-languages=c,c++,fortran,lto \
-	--prefix=%{_prefix} --mandir=%{_mandir} --infodir=%{_infodir} \
-	--with-bugurl=http://bugzilla.redhat.com/bugzilla \
-	--enable-checking=release --with-system-zlib \
-	--with-gcc-major-version-only --without-isl
-make %{?_smp_mflags}
-cd ..
-rm -f newlib
-%endif
 
 rm -rf obj-%{gcc_target_platform}
 mkdir obj-%{gcc_target_platform}
@@ -544,10 +479,6 @@ CONFIGURE_OPTS="\
 	--enable-libmpx \
 %else
 	--disable-libmpx \
-%endif
-%if %{build_offload_nvptx}
-	--enable-offload-targets=nvptx-none \
-	--without-cuda-driver \
 %endif
 %if 0%{?fedora} >= 21 || 0%{?rhel} >= 7
 %if %{attr_ifunc}

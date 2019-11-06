@@ -13,8 +13,8 @@
 #workaround for another compiler error
 #bcond_without llvm
 
-#ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7
-%ifarch x86_64 ppc ppc64 ppc64le ppc64p7
+#ifarch %{ix86} x86_64 ppc64le
+%ifarch x86_64 ppc64le
 %bcond_without llvm
 %else
 %bcond_with llvm
@@ -40,9 +40,9 @@
 # Until annobin is fixed (#1519165).
 %undefine _annotated_build
 %endif
-%global multilib_64_archs sparc64 ppc64 ppc64p7 x86_64
+%global multilib_64_archs x86_64
 %global build_isl 1
-%ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64 %{mips}
+%ifarch %{ix86} x86_64 ppc64le s390x %{arm} aarch64 %{mips}
 %global attr_ifunc 1
 %else
 %global attr_ifunc 0
@@ -64,7 +64,6 @@ Source0: gcc-%{gcc_version}-%{DATE}.tar.xz
 
 Patch0: gcc9-hack.patch
 Patch1: gcc9-i386-libgomp.patch
-Patch2: gcc9-sparc-config-detection.patch
 Patch3: gcc9-libgomp-omp_h-multilib.patch
 Patch4: gcc9-libtool-no-rpath.patch
 Patch5: gcc9-isl-dl.patch
@@ -116,11 +115,11 @@ BuildRequires: gdb
 BuildRequires: glibc-devel >= 2.4.90-13
 BuildRequires: elfutils-devel >= 0.147
 BuildRequires: elfutils-libelf-devel >= 0.147
-%ifarch ppc ppc64 ppc64le ppc64p7 s390 s390x sparc sparcv9 alpha
+%ifarch ppc64le s390x
 # Make sure glibc supports TFmode long double
 BuildRequires: glibc >= 2.3.90-35
 %endif
-%ifarch %{multilib_64_archs} sparcv9 ppc
+%ifarch %{multilib_64_archs}
 # Ensure glibc{,-devel} is installed for both multilib arches
 BuildRequires: /lib/libc.so.6 /usr/lib/libc.so /lib64/libc.so.6 /usr/lib64/libc.so
 %endif
@@ -185,15 +184,7 @@ ExcludeArch: armv7hl
 %global _vendor fedora_ghdl
 
 %global _gnu %{nil}
-%ifarch sparc
-%global gcc_target_platform sparc64-%{_vendor}-%{_target_os}
-%endif
-%ifarch ppc
-%global gcc_target_platform ppc64-%{_vendor}-%{_target_os}
-%endif
-%ifnarch sparc ppc
 %global gcc_target_platform %{_target_platform}
-%endif
 
 # do not strip libgrt.a -- makes debugging tedious otherwise
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's#/usr/lib/rpm/redhat/brp-strip-static-archive .*##g')
@@ -262,7 +253,6 @@ that tracks signal updates and schedules processes.
 %setup -q -n gcc-%{gcc_version}-%{DATE} -a 100
 %patch0 -p0 -b .hack~
 %patch1 -p0 -b .i386-libgomp~
-%patch2 -p0 -b .sparc-config-detection~
 %patch3 -p0 -b .libgomp-omp_h-multilib~
 %patch4 -p0 -b .libtool-no-rpath~
 %if %{build_isl}
@@ -286,23 +276,6 @@ cp -a libstdc++-v3/config/cpu/i{4,3}86/atomicity.h
 LC_ALL=C sed -i -e 's/\xa0/ /' gcc/doc/options.texi
 
 sed -i -e 's/Common Driver Var(flag_report_bug)/& Init(1)/' gcc/common.opt
-
-%ifarch ppc
-if [ -d libstdc++-v3/config/abi/post/powerpc64-linux-gnu ]; then
-  mkdir -p libstdc++-v3/config/abi/post/powerpc64-linux-gnu/64
-  mv libstdc++-v3/config/abi/post/powerpc64-linux-gnu/{,64/}baseline_symbols.txt
-  mv libstdc++-v3/config/abi/post/powerpc64-linux-gnu/{32/,}baseline_symbols.txt
-  rm -rf libstdc++-v3/config/abi/post/powerpc64-linux-gnu/32
-fi
-%endif
-%ifarch sparc
-if [ -d libstdc++-v3/config/abi/post/sparc64-linux-gnu ]; then
-  mkdir -p libstdc++-v3/config/abi/post/sparc64-linux-gnu/64
-  mv libstdc++-v3/config/abi/post/sparc64-linux-gnu/{,64/}baseline_symbols.txt
-  mv libstdc++-v3/config/abi/post/sparc64-linux-gnu/{32/,}baseline_symbols.txt
-  rm -rf libstdc++-v3/config/abi/post/sparc64-linux-gnu/32
-fi
-%endif
 
 # This test causes fork failures, because it spawns way too many threads
 rm -f gcc/testsuite/go.test/test/chan/goroutines.go
@@ -380,9 +353,6 @@ OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/-m64//g;s/-m32//g;s/-m31//g'`
 OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/-mfpmath=sse/-mfpmath=sse -msse2/g'`
 OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/ -pipe / /g'`
 OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/-Werror=format-security/-Wformat-security/g'`
-%ifarch sparc
-OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/-mcpu=ultrasparc/-mtune=ultrasparc/g;s/-mcpu=v[78]//g'`
-%endif
 %ifarch %{ix86}
 OPT_FLAGS=`echo $OPT_FLAGS|sed -e 's/-march=i.86//g'`
 %endif
@@ -430,34 +400,14 @@ CONFIGURE_OPTS="\
 %ifarch %{arm}
 	--disable-sjlj-exceptions \
 %endif
-%ifarch ppc ppc64 ppc64le ppc64p7
+%ifarch ppc64le
 	--enable-secureplt \
 %endif
-%ifarch sparc sparcv9 sparc64 ppc ppc64 ppc64le ppc64p7 s390 s390x alpha
+%ifarch ppc64le s390x
 	--with-long-double-128 \
-%endif
-%ifarch sparc
-	--disable-linux-futex \
-%endif
-%ifarch sparc64
-	--with-cpu=ultrasparc \
-%endif
-%ifarch sparc sparcv9
-	--host=%{gcc_target_platform} --build=%{gcc_target_platform} --target=%{gcc_target_platform} --with-cpu=v7
-%endif
-%ifarch ppc ppc64 ppc64p7
-%if 0%{?rhel} >= 7
-	--with-cpu-32=power7 --with-tune-32=power7 --with-cpu-64=power7 --with-tune-64=power7 \
-%endif
-%if 0%{?rhel} == 6
-	--with-cpu-32=power4 --with-tune-32=power6 --with-cpu-64=power4 --with-tune-64=power6 \
-%endif
 %endif
 %ifarch ppc64le
 	--with-cpu-32=power8 --with-tune-32=power8 --with-cpu-64=power8 --with-tune-64=power8 \
-%endif
-%ifarch ppc
-	--build=%{gcc_target_platform} --target=%{gcc_target_platform} --with-cpu=default32
 %endif
 %ifarch %{ix86} x86_64
 	--enable-cet \
@@ -504,9 +454,7 @@ CONFIGURE_OPTS="\
 %ifarch mips64 mips64el
 	--with-arch=mips64r2 --with-abi=64 \
 %endif
-%ifnarch sparc sparcv9 ppc
 	--build=%{gcc_target_platform} \
-%endif
 	"
 
 CC="$CC" CXX="$CXX" CFLAGS="$OPT_FLAGS" \
@@ -531,12 +479,6 @@ gnatmake -c -aI%{_builddir}/gcc-%{gcc_version}-%{DATE}/gcc/vhdl ortho_gcc-main \
   -gnata -gnat05 -gnaty3befhkmr
 #-gnatwae
 popd
-
-#%ifarch sparc sparcv9 sparc64
-#make %{?_smp_mflags} BOOT_CFLAGS="$OPT_FLAGS" bootstrap
-#%else
-#make %{?_smp_mflags} BOOT_CFLAGS="$OPT_FLAGS" profiledbootstrap
-#%endif
 
 #%{__make} %{?_smp_mflags}
 %{__make}

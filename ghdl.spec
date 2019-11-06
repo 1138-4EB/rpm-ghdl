@@ -47,15 +47,6 @@
 %else
 %global attr_ifunc 0
 %endif
-%ifarch sparc64
-%global multilib_32_arch sparcv9
-%endif
-%ifarch ppc64 ppc64p7
-%global multilib_32_arch ppc
-%endif
-%ifarch x86_64
-%global multilib_32_arch i686
-%endif
 
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl

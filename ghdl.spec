@@ -292,7 +292,6 @@ perl -i -pe 's,^libdirreverse=.*$,libdirreverse=../../..,' configure
 popd
 %endif
 
-sed -i -e 's/4\.9\.3/4.9.2/' gcc/BASE-VER
 echo 'Red Hat %{version}-%{gcc_release}' > gcc/DEV-PHASE
 
 pushd ghdl
@@ -435,7 +434,7 @@ CC="$CC" CXX="$CXX" CFLAGS="$OPT_FLAGS" \
 	$CONFIGURE_OPTS
 
 # workaround for gcc gnat ICE on valid, do not compile trans-chap8 with optimization
-%{__make} || true
+make || true
 pushd gcc/vhdl
 gnatmake -c -aI%{_builddir}/gcc-%{gcc_version}-%{DATE}/gcc/vhdl ortho_gcc-main \
   -cargs -g -Wall -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 \
@@ -449,8 +448,8 @@ gnatmake -c -aI%{_builddir}/gcc-%{gcc_version}-%{DATE}/gcc/vhdl ortho_gcc-main \
 #-gnatwae
 popd
 
-#%{__make} %{?_smp_mflags}
-%{__make}
+#make %{?_smp_mflags}
+make
 
 popd
 
@@ -474,7 +473,7 @@ popd
 %endif
 
 # install gcc
-%{__make} -C obj-%{gcc_target_platform} DESTDIR=%{buildroot} install
+make -C obj-%{gcc_target_platform} DESTDIR=%{buildroot} install
 
 PBINDIR=`pwd`/obj-%{gcc_target_platform}/gcc/
 
@@ -502,7 +501,7 @@ echo "-lgnat-6"
 
 # Remove files not to be packaged
 pushd %{buildroot}
-%{__rm} -f \
+rm -f \
         .%{_bindir}/{cpp,gcc,gccbug,gcov,gcov-dump,gcov-tool} \
         .%{_bindir}/%{gcc_target_platform}-gcc{,-%{gcc_major}} \
         .%{_bindir}/{,%{gcc_target_platform}-}gcc-{ar,nm,ranlib} \
@@ -521,26 +520,26 @@ pushd %{buildroot}
         .%{_libdir}/32/libiberty.a
 
 # Remove crt/libgcc, as ghdl invokes the native gcc to perform the linking
-%{__rm} -f \
+rm -f \
         .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/*crt* \
         .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/libgc* \
         .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/{cc1,collect2} \
         .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/*lto*
 
 # Remove directory hierarchies not to be packaged
-%{__rm} -rf \
+rm -rf \
         .%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_major}/{include,include-fixed,plugin,install-tools} \
         .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/install-tools \
         .%{_libexecdir}/gcc/%{gcc_target_platform}/%{gcc_major}/plugin \
 
 popd
 
-%{__install} -d %{buildroot}%{_includedir}/ghdl
-%{__mv} %{buildroot}%{_includedir}/vpi_user.h %{buildroot}%{_includedir}/ghdl
-%{__mv} %{buildroot}%{_includedir}/ghdlsynth*.h %{buildroot}%{_includedir}/ghdl
+install -d %{buildroot}%{_includedir}/ghdl
+mv %{buildroot}%{_includedir}/vpi_user.h %{buildroot}%{_includedir}/ghdl
+mv %{buildroot}%{_includedir}/ghdlsynth*.h %{buildroot}%{_includedir}/ghdl
 %if %{_lib} != lib
-%{__mv} %{buildroot}/usr/lib/libghdlvpi.so %{buildroot}%{_libdir}/
-%{__mv} %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
+mv %{buildroot}/usr/lib/libghdlvpi.so %{buildroot}%{_libdir}/
+mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %endif
 
 %files

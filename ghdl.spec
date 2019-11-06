@@ -42,7 +42,7 @@
 %endif
 %global multilib_64_archs x86_64
 %global build_isl 1
-%ifarch %{ix86} x86_64 ppc64le s390x %{arm} aarch64 %{mips}
+%ifarch %{ix86} x86_64 ppc64le s390x %{arm} aarch64
 %global attr_ifunc 1
 %else
 %global attr_ifunc 0
@@ -376,16 +376,14 @@ CONFIGURE_OPTS="\
 %ifarch ppc64le
 	--enable-targets=powerpcle-linux \
 %endif
-%ifarch ppc64le %{mips} riscv64 s390x
+%ifarch ppc64le riscv64 s390x
 	--disable-multilib \
 %else
 	--enable-multilib \
 %endif
 	--with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions \
 	--enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only \
-%ifnarch %{mips}
 	--with-linker-hash-style=gnu \
-%endif
 	--enable-plugin --enable-initfini-array \
 %if %{build_isl}
 	--with-isl \
@@ -447,12 +445,6 @@ CONFIGURE_OPTS="\
 %ifarch armv7hl
 	--with-tune=generic-armv7-a --with-arch=armv7-a \
 	--with-float=hard --with-fpu=vfpv3-d16 --with-abi=aapcs-linux \
-%endif
-%ifarch mips mipsel
-	--with-arch=mips32r2 --with-fp-32=xx \
-%endif
-%ifarch mips64 mips64el
-	--with-arch=mips64r2 --with-abi=64 \
 %endif
 	--build=%{gcc_target_platform} \
 	"

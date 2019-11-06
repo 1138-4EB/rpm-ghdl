@@ -41,11 +41,6 @@
 %undefine _annotated_build
 %endif
 %global multilib_64_archs sparc64 ppc64 ppc64p7 x86_64
-%ifarch %{ix86} x86_64 ia64 ppc64le
-%global build_libquadmath 1
-%else
-%global build_libquadmath 0
-%endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64 %{mips}
 %global build_libatomic 1
 %else
@@ -642,7 +637,7 @@ pushd %{buildroot}
         .%{_prefix}/lib/libgcc_s.* \
         .%{_prefix}/lib/libmudflap.* \
         .%{_prefix}/lib/libmudflapth.* \
-        .%{_prefix}/lib/{libatomic,libgomp,libquadmath,libssp}* \
+        .%{_prefix}/lib/lib{atomic,gomp,quadmath,ssp}* \
         .%{_libdir}/32/libiberty.a
 
 # Remove crt/libgcc, as ghdl invokes the native gcc to perform the linking

@@ -41,11 +41,6 @@
 %undefine _annotated_build
 %endif
 %global multilib_64_archs sparc64 ppc64 ppc64p7 x86_64
-%ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64 %{mips}
-%global build_libatomic 1
-%else
-%global build_libatomic 0
-%endif
 %ifarch %{ix86} x86_64 %{arm} alpha ppc ppc64 ppc64le ppc64p7 s390 s390x aarch64
 %global build_libitm 1
 %else

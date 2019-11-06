@@ -40,7 +40,6 @@
 # Until annobin is fixed (#1519165).
 %undefine _annotated_build
 %endif
-%global multilib_64_archs x86_64
 %global build_isl 1
 %ifarch %{ix86} x86_64 ppc64le s390x %{arm} aarch64
 %global attr_ifunc 1
@@ -118,10 +117,6 @@ BuildRequires: elfutils-libelf-devel >= 0.147
 %ifarch ppc64le s390x
 # Make sure glibc supports TFmode long double
 BuildRequires: glibc >= 2.3.90-35
-%endif
-%ifarch %{multilib_64_archs}
-# Ensure glibc{,-devel} is installed for both multilib arches
-BuildRequires: /lib/libc.so.6 /usr/lib/libc.so /lib64/libc.so.6 /usr/lib64/libc.so
 %endif
 %ifarch ia64
 BuildRequires: libunwind >= 0.98
@@ -376,11 +371,7 @@ CONFIGURE_OPTS="\
 %ifarch ppc64le
 	--enable-targets=powerpcle-linux \
 %endif
-%ifarch ppc64le riscv64 s390x
 	--disable-multilib \
-%else
-	--enable-multilib \
-%endif
 	--with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions \
 	--enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only \
 	--with-linker-hash-style=gnu \

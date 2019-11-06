@@ -46,26 +46,6 @@
 %else
 %global build_libquadmath 0
 %endif
-%ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
-%global build_libasan 1
-%else
-%global build_libasan 0
-%endif
-%ifarch x86_64 ppc64 ppc64le aarch64
-%global build_libtsan 1
-%else
-%global build_libtsan 0
-%endif
-%ifarch x86_64 ppc64 ppc64le aarch64
-%global build_liblsan 1
-%else
-%global build_liblsan 0
-%endif
-%ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
-%global build_libubsan 1
-%else
-%global build_libubsan 0
-%endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64 %{mips}
 %global build_libatomic 1
 %else

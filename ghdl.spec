@@ -20,10 +20,6 @@
 %bcond_with llvm
 %endif
 
-%ifarch x86_64
-%bcond_with m32
-%endif
-
 %bcond_with gnatwae
 
 %global DATE 20190503
@@ -481,20 +477,8 @@ popd
 %{__make} -C obj-%{gcc_target_platform} DESTDIR=%{buildroot} install
 
 PBINDIR=`pwd`/obj-%{gcc_target_platform}/gcc/
-PNATIVE=%{buildroot}/%{_prefix}/lib/ghdl/
-P32=%{buildroot}/%{_prefix}/lib/ghdl/32/
 
 pushd ghdl
-%ifarch x86_64
-%if %{with m32}
-make bindir=${PBINDIR} GHDL1_GCC_BIN="--GHDL1=${PBINDIR}/ghdl1 -m32" OPT_FLAGS="-g -m32" ghdllib
-make DESTDIR=%{buildroot} install
-%{__install} -d ${P32}
-%{__mv} ${PNATIVE}/grt.* ${PNATIVE}/lib* ${PNATIVE}/src ${PNATIVE}/v08 ${PNATIVE}/v87 ${PNATIVE}/v93 ${PNATIVE}/vendors ${P32}
-make clean
-%endif
-%endif
-
 make bindir=${PBINDIR} GHDL1_GCC_BIN="--GHDL1=${PBINDIR}/ghdl1" ghdllib
 make DESTDIR=%{buildroot} install
 popd

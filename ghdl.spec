@@ -41,11 +41,6 @@
 %undefine _annotated_build
 %endif
 %global build_isl 1
-%ifarch %{ix86} x86_64 ppc64le s390x %{arm} aarch64
-%global attr_ifunc 1
-%else
-%global attr_ifunc 0
-%endif
 
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
@@ -380,11 +375,6 @@ CONFIGURE_OPTS="\
 	--with-isl \
 %else
 	--without-isl \
-%endif
-%if 0%{?fedora} >= 21 || 0%{?rhel} >= 7
-%if %{attr_ifunc}
-	--enable-gnu-indirect-function \
-%endif
 %endif
 %ifarch %{arm}
 	--disable-sjlj-exceptions \

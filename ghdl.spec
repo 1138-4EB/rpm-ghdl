@@ -274,14 +274,12 @@ mv ghdl-%{ghdlcommit} ghdl
 perl -i -pe 's,-gnatwae,,' ghdl/dist/gcc/Make-lang.in
 %endif
 
-%ifarch %{ix86} x86_64
 %if %{with mcode}
 cp -r ghdl ghdl-mcode
 pushd ghdl-mcode
 perl -i -pe 's,^libdirsuffix=.*$,libdirsuffix=%{_lib}/ghdl/mcode,' configure
 perl -i -pe 's,^libdirreverse=.*$,libdirreverse=../../..,' configure
 popd
-%endif
 %endif
 
 %if %{with llvm}
@@ -304,7 +302,6 @@ popd
 %build
 
 # build mcode on x86
-%ifarch %{ix86} x86_64
 %if %{with mcode}
 pushd ghdl-mcode
 ./configure \
@@ -314,7 +311,6 @@ pushd ghdl-mcode
 	--prefix=/usr --enable-libghdl --enable-synth
 make %{?_smp_mflags}
 popd
-%endif
 %endif
 
 %if %{with llvm}
@@ -455,13 +451,11 @@ popd
 
 %install
 # install mcode on x86
-%ifarch %{ix86} x86_64
 %if %{with mcode}
 pushd ghdl-mcode
 make DESTDIR=%{buildroot} install
 mv %{buildroot}/%{_bindir}/ghdl %{buildroot}/%{_bindir}/ghdl-mcode
 popd
-%endif
 %endif
 
 # install llvm
@@ -559,7 +553,6 @@ mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %{_prefix}/lib/gcc/
 %{_prefix}/lib/ghdl/
 
-%ifarch %{ix86} x86_64
 %if %{with mcode}
 %files mcode
 %{_bindir}/ghdl-mcode
@@ -567,7 +560,6 @@ mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %files mcode-grt
 %dir %{_libdir}/ghdl
 %{_libdir}/ghdl/mcode
-%endif
 %endif
 
 %if %{with llvm}

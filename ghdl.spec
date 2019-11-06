@@ -56,15 +56,6 @@
 %else
 %global build_libitm 0
 %endif
-%if 0%{?rhel} > 7
-%global build_libmpx 0
-%else
-%ifarch %{ix86} x86_64
-%global build_libmpx 1
-%else
-%global build_libmpx 0
-%endif
-%endif
 %global build_isl 1
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64 %{mips}
 %global attr_ifunc 1
@@ -454,11 +445,6 @@ CONFIGURE_OPTS="\
 	--with-isl \
 %else
 	--without-isl \
-%endif
-%if %{build_libmpx}
-	--enable-libmpx \
-%else
-	--disable-libmpx \
 %endif
 %if 0%{?fedora} >= 21 || 0%{?rhel} >= 7
 %if %{attr_ifunc}

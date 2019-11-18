@@ -92,9 +92,6 @@ BuildRequires: elfutils-libelf-devel >= 0.147
 # Make sure glibc supports TFmode long double
 BuildRequires: glibc >= 2.3.90-35
 %endif
-%ifarch ia64
-BuildRequires: libunwind >= 0.98
-%endif
 %if %{build_isl}
 BuildRequires: isl = %{isl_version}
 BuildRequires: isl-devel = %{isl_version}

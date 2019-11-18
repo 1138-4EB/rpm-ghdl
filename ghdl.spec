@@ -73,24 +73,7 @@ Patch100: ghdl-llvmflags.patch
 Patch106: ghdl-ppc64abort.patch
 Requires: gcc
 
-# Need binutils with -pie support >= 2.14.90.0.4-4
-# Need binutils which can omit dot symbols and overlap .opd on ppc64 >= 2.15.91.0.2-4
-# Need binutils which handle -msecure-plt on ppc >= 2.16.91.0.2-2
-# Need binutils which support .weakref >= 2.16.91.0.3-1
-# Need binutils which support --hash-style=gnu >= 2.17.50.0.2-7
-# Need binutils which support mffgpr and mftgpr >= 2.17.50.0.2-8
-# Need binutils which support --build-id >= 2.17.50.0.17-3
-# Need binutils which support %%gnu_unique_object >= 2.19.51.0.14
-# Need binutils which support .cfi_sections >= 2.19.51.0.14-33
-# Need binutils which support --no-add-needed >= 2.20.51.0.2-12
-# Need binutils which support -plugin
-# Need binutils which support .loc view >= 2.30
-# Need binutils which support --generate-missing-build-notes=yes >= 2.31
-%if 0%{?fedora} >= 29 || 0%{?rhel} > 7
 BuildRequires: binutils >= 2.31
-%else
-BuildRequires: binutils >= 2.24
-%endif
 BuildRequires: zlib-devel, gettext, bison, flex, sharutils
 BuildRequires: texinfo, texinfo-tex, /usr/bin/pod2man
 BuildRequires: systemtap-sdt-devel >= 1.3
@@ -121,27 +104,7 @@ Requires: libisl.so.15()(64bit)
 Requires: libisl.so.15
 %endif
 %endif
-# Need .eh_frame ld optimizations
-# Need proper visibility support
-# Need -pie support
-# Need --as-needed/--no-as-needed support
-# On ppc64, need omit dot symbols support and --non-overlapping-opd
-# Need binutils that owns /usr/bin/c++filt
-# Need binutils that support .weakref
-# Need binutils that supports --hash-style=gnu
-# Need binutils that support mffgpr/mftgpr
-# Need binutils that support --build-id
-# Need binutils that support %%gnu_unique_object
-# Need binutils that support .cfi_sections
-# Need binutils that support --no-add-needed
-# Need binutils that support -plugin
-# Need binutils that support .loc view >= 2.30
-# Need binutils which support --generate-missing-build-notes=yes >= 2.31
-%if 0%{?fedora} >= 29 || 0%{?rhel} > 7
 Requires: binutils >= 2.31
-%else
-Requires: binutils >= 2.24
-%endif
 Requires: libgcc >= %{gcc_version}-%{gcc_release}
 
 BuildRequires: autoconf

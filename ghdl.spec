@@ -88,10 +88,6 @@ BuildRequires: gdb
 BuildRequires: glibc-devel >= 2.4.90-13
 BuildRequires: elfutils-devel >= 0.147
 BuildRequires: elfutils-libelf-devel >= 0.147
-%ifarch ppc64le s390x
-# Make sure glibc supports TFmode long double
-BuildRequires: glibc >= 2.3.90-35
-%endif
 %if %{build_isl}
 BuildRequires: isl = %{isl_version}
 BuildRequires: isl-devel = %{isl_version}

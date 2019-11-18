@@ -22,9 +22,9 @@
 
 %bcond_with gnatwae
 
-%global DATE 20190503
-%global SVNREV 267776
-%global gcc_version 9.1.1
+%global DATE 20190827
+%global SVNREV 274959
+%global gcc_version 9.2.1
 %global gcc_major 9
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
@@ -62,7 +62,6 @@ Patch8: gcc9-foffload-default.patch
 Patch9: gcc9-Wno-format-security.patch
 Patch10: gcc9-rh1574936.patch
 Patch11: gcc9-d-shared-libphobos.patch
-Patch12: gcc9-pr90303.patch
 
 Source100: https://github.com/ghdl/ghdl/archive/%{ghdlcommit}/%{name}-%{ghdlshortcommit}.tar.gz
 Patch100: ghdl-llvmflags.patch
@@ -207,7 +206,6 @@ that tracks signal updates and schedules processes.
 %patch10 -p0 -b .rh1574936~
 %endif
 %patch11 -p0 -b .d-shared-libphobos~
-%patch12 -p0 -b .pr90303~
 
 echo 'Red Hat %{version}-%{gcc_release}' > gcc/DEV-PHASE
 

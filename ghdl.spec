@@ -1,6 +1,6 @@
 %global ghdlver 0.37dev
-%global ghdldate 20191102
-%global ghdlcommit 534f39a26135724ceaa81b60de8856b723953f5b
+%global ghdldate 20191118
+%global ghdlcommit b57c47f3c516d156c046fe162a132b34e8806b7e
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
 %global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
 
@@ -41,7 +41,7 @@
 Summary: A VHDL simulator, using the GCC technology
 Name: ghdl
 Version: %{ghdlver}
-Release: 5.%{ghdlgitrev}%{?dist}
+Release: 6.%{ghdlgitrev}%{?dist}
 License: GPLv2+ and GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
 URL: http://ghdl.free.fr/
 # The source for this package was pulled from upstream's vcs.  Use the
@@ -527,6 +527,11 @@ mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %endif
 
 %changelog
+* Tue Nov 19 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-6.20191118gitb57c47f
+- updated to new ghdl snapshot
+- rebased to gcc 9.2.1
+- many cleanups
+
 * Sun Nov 03 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-5.20191102git534f39a
 - updated to new ghdl snapshot
 

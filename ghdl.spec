@@ -1,6 +1,6 @@
 %global ghdlver 0.37dev
-%global ghdldate 20191119
-%global ghdlcommit 19c87d08ad5cb06c8f537bbe2306508eebe0978d
+%global ghdldate 20191121
+%global ghdlcommit 03862a4607fd127e6570a3e141a92265a23c2a68
 %global ghdlshortcommit %(c=%{ghdlcommit}; echo ${c:0:7})
 %global ghdlgitrev %{ghdldate}git%{ghdlshortcommit}
 
@@ -527,7 +527,7 @@ mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %endif
 
 %changelog
-* Tue Nov 19 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-6.20191118git19c87d0
+* Tue Nov 19 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-6.20191121git03862a4
 - updated to new ghdl snapshot
 - rebased to gcc 9.2.1
 - many cleanups

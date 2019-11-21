@@ -22,13 +22,13 @@
 
 %bcond_with gnatwae
 
-%global DATE 20190827
-%global SVNREV 274959
+%global DATE 20191120
+%global SVNREV 278493
 %global gcc_version 9.2.1
 %global gcc_major 9
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
-%global gcc_release 1
+%global gcc_release 2
 %global _performance_build 1
 # Hardening slows the compiler way too much.
 %undefine _hardened_build

@@ -527,7 +527,7 @@ mv %{buildroot}/usr/lib/libghdl-*.so %{buildroot}%{_libdir}/
 %endif
 
 %changelog
-* Tue Nov 19 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-6.20191121git03862a4
+* Thu Nov 21 2019 Dan Horák <dan[at]danny.cz> - 0.37dev-6.20191121git03862a4
 - updated to new ghdl snapshot
 - rebased to gcc 9.2.1
 - many cleanups
